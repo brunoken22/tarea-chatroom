@@ -5,12 +5,21 @@ import * as cors from "cors";
 import { match } from "assert";
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
+const ROOT_PATH = __dirname.replace("src/", "");
 
 app.use(express.json());
 app.use(cors());
 const usersCollection = baseDeDatos.collection("/users");
 const roomsCollection = baseDeDatos.collection("/rooms");
+
+app.use(express.json());
+app.get("/env", (req, res) => {
+   res.json({
+      environment: process.env.ENV,
+      back: process.env.BACKEND_URL,
+   });
+});
 
 app.post("/singup", (req, res) => {
    const email = req.body.email;
@@ -123,102 +132,14 @@ app.post("/rooms/:rtdbRoom", (req, res) => {
       res.json("todo ok.");
    });
 });
+app.use(express.static("dist"));
+app.get("*", (req, res) => {
+   res.sendFile(__dirname + "../dist/index.html");
+});
+app.use(express.static("dist"));
+app.get("*", (req, res) => {
+   res.sendFile(ROOT_PATH + "dist/index.html");
+});
 app.listen(port, () => {
    console.log(`Example app listening at http://localhost:${port}`);
 });
-
-// app.post("/messages", (req, res) => {
-//    const chatRoomRef = rtdb.ref("/messages/general/messages");
-//    console.log(req.body);
-
-//    chatRoomRef.push(req.body, function (e) {
-//       res.json("Todo ok.");
-//    });
-// });
-// const userCollection = baseDeDatos.collection("users");
-
-// app.get("/users/:userId", (req, res) => {
-//    const userId = req.params.userId;
-//    const userDoc = userCollection.doc(userId);
-
-//    userDoc.get().then((snap) => {
-//       const userData = snap.data();
-//       res.json(userData);
-//    });
-// });
-
-// app.get("/users/:userId", (req, res) => {
-//    res.json({ params: req.params, message: "un usuario en particular" });
-// });
-
-// app.post("/users", (req, res) => {
-//    res.json({ id: 1, name: "bruno" });
-// });
-
-// app.patch("/users/:id", (req, res) => {
-//    const userId = req.params.id;
-//    const userDoc = userCollection.doc(userId);
-//    const upDateObject = req.body;
-//    upDateObject.updateAt = new Date();
-
-//    userDoc.update(upDateObject).then((snap) => {
-//       console.log(snap);
-
-//       res.json({ message: "Ok" });
-//    });
-// });
-
-// app.delete("/users/:userId", (req, res) => {
-//    const userId = req.params.userId;
-//    userCollection
-//       .doc(userId)
-//       .delete()
-//       .then((result) => {
-//          res.json({ message: "Eliminado" });
-//          res.status(204);
-//       });
-// });
-
-// ******************************
-
-// app.get("/users/:userId", (req, res) => {
-//    const userId = req.params.userId;
-//    const userDoc = userCollection.doc(userId);
-
-//    userDoc.get().then((snap) => {
-//       const userData = snap.data();
-//       res.json(userData);
-//    });
-// });
-
-// app.get("/users/:userId", (req, res) => {
-//    res.json({ params: req.params, message: "un usuario en particular" });
-// });
-
-// app.post("/users", (req, res) => {
-//    res.json({ id: 1, name: "bruno" });
-// });
-
-// app.patch("/users/:id", (req, res) => {
-//    const userId = req.params.id;
-//    const userDoc = userCollection.doc(userId);
-//    const upDateObject = req.body;
-//    upDateObject.updateAt = new Date();
-
-//    userDoc.update(upDateObject).then((snap) => {
-//       console.log(snap);
-
-//       res.json({ message: "Ok" });
-//    });
-// });
-
-// app.delete("/users/:userId", (req, res) => {
-//    const userId = req.params.userId;
-//    userCollection
-//       .doc(userId)
-//       .delete()
-//       .then((result) => {
-//          res.json({ message: "Eliminado" });
-//          res.status(204);
-//       });
-// });
